@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="as" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postpaid Field Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--primary:#60a5fa;--strong:#3b82f6;--soft:rgba(96,165,250,.16);--bg:#0a1120;--card:#151f33;--sub:rgba(255,255,255,.04);--line:#26344f;--text:#e8eefb;--muted:#8fa0bb;--field:#0e182b;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.28);--h1:#0f1d44;--h2:#1d3a8a;--green:#4ade80;--green-bg:rgba(34,197,94,.16);--red:#f87171;--red-bg:rgba(239,68,68,.18);--amber:#fbbf24;--amber-bg:rgba(245,158,11,.16);--slate:#cbd5e1;--slate-bg:rgba(148,163,184,.16);color-scheme:dark}
+:root[data-theme=light]{--primary:#1e40af;--strong:#1d4ed8;--soft:#e0e7ff;--bg:#f1f5f9;--card:#fff;--sub:#f8fafc;--line:#e2e8f0;--text:#0f172a;--muted:#64748b;--field:#fff;--shadow:0 1px 2px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.06);--h1:#1e3a8a;--h2:#2563eb;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--amber:#b45309;--amber-bg:#fef3c7;--slate:#475569;--slate-bg:#e2e8f0;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali",Roboto,sans-serif}
+body{background:var(--bg);color:var(--text)}
+.wrap{max-width:1400px;margin:0 auto;padding:0 16px 40px}
+header{background:linear-gradient(135deg,var(--h1),var(--h2));color:#fff;padding:20px 16px 64px}
+header .in{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:1.4rem}header p{font-size:.85rem;opacity:.8}
+.hr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#status{font-size:.78rem;background:rgba(255,255,255,.14);padding:7px 12px;border-radius:999px;font-weight:600}
+.hb{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.25);padding:7px 13px;border-radius:999px;font-size:.8rem;font-weight:700;cursor:pointer}
+.main{margin-top:-44px}
+.tabs{display:inline-flex;gap:4px;background:var(--card);padding:5px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:18px;border:1px solid var(--line)}
+.tb{padding:9px 18px;border:0;background:0;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);border-radius:8px}
+.tb.on{background:var(--strong);color:#fff}
+.tc{display:none}.tc.on{display:block}
+.bar{background:var(--card);padding:12px;border-radius:12px;box-shadow:var(--shadow);border:1px solid var(--line);display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.f{flex:1;min-width:170px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;font-size:.92rem;background:var(--field);color:var(--text);outline:0}
+.f:focus{border-color:var(--primary)}select.f{flex:0 0 auto;min-width:170px;max-width:260px}
+.btn{padding:10px 18px;background:var(--strong);color:#fff;border:0;border-radius:8px;cursor:pointer;font-weight:600;font-size:.88rem}
+.gh{background:var(--slate-bg);color:var(--slate)}.ex{background:#16a34a}
+.chk{display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:1.5rem;color:var(--primary)}.stat span{font-size:.74rem;color:var(--muted);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;align-items:start}
+.card{--a:var(--slate);--ab:var(--slate-bg);background:linear-gradient(180deg,var(--ab) 0,var(--card) 110px);border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--line);border-left:5px solid var(--a);overflow:hidden}
+.card.green{--a:var(--green);--ab:var(--green-bg)}.card.red{--a:var(--red);--ab:var(--red-bg)}.card.amber{--a:var(--amber);--ab:var(--amber-bg)}
+.top{padding:14px 16px 8px;display:flex;justify-content:space-between;gap:10px}
+.lbl{font-size:.68rem;color:var(--muted);font-weight:700}.cno{font-size:1.15rem;font-weight:800;word-break:break-all}.nm{font-size:.9rem;font-weight:600;color:var(--muted)}
+.cnt{background:var(--soft);color:var(--primary);font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:999px;height:fit-content;white-space:nowrap}
+.body{padding:0 16px 12px}
+.pill{display:inline-block;font-size:.76rem;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:10px}
+.pill.green{background:var(--green-bg);color:var(--green)}.pill.red{background:var(--red-bg);color:var(--red)}.pill.amber{background:var(--amber-bg);color:var(--amber)}.pill.slate{background:var(--slate-bg);color:var(--slate)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:10px}
+.k{font-size:.66rem;color:var(--muted);font-weight:700}.v{font-size:.9rem;font-weight:600;word-break:break-word}
+.rem{background:var(--sub);border-left:3px solid var(--a);padding:8px 10px;border-radius:6px;font-size:.86rem;line-height:1.45;margin-bottom:10px}
+.rem small{display:block;color:var(--muted);font-weight:700;font-size:.66rem}
+.act{display:flex;gap:8px;flex-wrap:wrap}
+.lk{font-size:.8rem;font-weight:600;color:var(--primary);background:var(--soft);padding:6px 12px;border-radius:8px;text-decoration:none}
+.ht{width:100%;background:var(--sub);border:0;border-top:1px solid var(--line);padding:10px 16px;font-size:.82rem;font-weight:700;color:var(--primary);cursor:pointer;text-align:left;display:flex;justify-content:space-between}
+.hist{display:none;padding:6px 16px 14px;background:var(--sub)}.hist.open{display:block}
+.hi{padding:10px 0 10px 16px;border-left:2px solid var(--line);margin-left:5px}
+.hi .t{font-size:.75rem;font-weight:700;color:var(--muted)}.hi .l{font-size:.85rem;margin-top:4px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}.hi .l .pill{margin:0;font-size:.7rem;padding:3px 8px}.hi .r{font-size:.82rem;color:var(--muted);margin-top:4px}.hi a{font-size:.78rem;font-weight:600;color:var(--primary);margin-right:10px;text-decoration:none}
+.empty{text-align:center;padding:48px 16px;color:var(--muted);font-weight:600;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.more{text-align:center;margin:22px 0 4px}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px;margin-bottom:20px}
+.sec h2{font-size:1.05rem;color:var(--primary);margin-bottom:12px}.tw{overflow-x:auto;margin-bottom:14px}
+.pw{display:inline-block;background:#fff;color:#0f172a;padding:16px;border-radius:8px}
+.pt{border-collapse:collapse;text-align:center;font-size:.9rem;border:2px solid #475569}.pt th,.pt td{border:1px solid #475569;padding:8px 10px}.pt td{font-weight:800}
+.pt th.rl{text-align:left;white-space:nowrap;background:#f1f5f9;color:#1e40af;min-width:150px}.pt th.ch{background:#1e40af;color:#fff;min-width:95px;max-width:120px;line-height:1.3}.pt .gt{font-weight:900;background:#cbd5e1;color:#0f172a}
+.br{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:480px){.cards{grid-template-columns:1fr}.tabs{display:flex}.tb{flex:1;padding:9px 8px}}
+</style>
+</head>
+<body>
+<header><div class="in">
+ <div><h1>⚡ <span data-i="title"></span></h1><p data-i="sub"></p></div>
+ <div class="hr"><span id="status"></span><button class="hb" id="rf" data-i="refresh"></button><button class="hb" id="lg"></button><button class="hb" id="th"></button></div>
+</div></header>
+
+<div class="wrap main">
+ <div class="tabs"><button class="tb on" data-t="s" data-i="tabS"></button><button class="tb" data-t="r" data-i="tabR"></button></div>
+
+ <div id="s" class="tc on">
+  <div class="stats">
+   <div class="stat"><b id="n1">0</b><span data-i="consumers"></span></div>
+   <div class="stat"><b id="n2">0</b><span data-i="reports"></span></div>
+   <div class="stat"><b id="n3">0</b><span data-i="repeat"></span></div>
+   <div class="stat"><b id="n4">0</b><span data-i="dues"></span></div>
+  </div>
+  <div class="bar">
+   <input id="q" class="f" data-p="searchPh">
+   <select id="tagF" class="f"></select>
+   <select id="bkF" class="f"></select>
+   <button class="btn gh" id="reset" data-i="reset"></button>
+  </div>
+  <div id="cards" class="cards"></div>
+  <div class="more" id="moreW" style="display:none"><button class="btn gh" id="more"></button></div>
+ </div>
+
+ <div id="r" class="tc">
+  <div class="bar">
+   <label style="font-weight:600;color:var(--muted);font-size:.9rem" data-i="date"></label>
+   <input type="date" id="rd" class="f" style="max-width:220px">
+   <button class="btn gh" id="cd" data-i="clear"></button>
+   <label class="chk"><input type="checkbox" id="dd" checked><span data-i="dedupe"></span></label>
+  </div>
+  <div class="sec"><h2 data-i="t1"></h2><div class="tw"><div class="pw" id="w1"></div></div>
+   <div class="br"><button class="btn ex" data-i="xls" onclick="csv('w1','Access')"></button><button class="btn" data-i="img" onclick="snap('w1','Access')"></button></div></div>
+  <div class="sec"><h2 data-i="t2"></h2><div class="tw"><div class="pw" id="w2"></div></div>
+   <div class="br"><button class="btn ex" data-i="xls" onclick="csv('w2','Action')"></button><button class="btn" data-i="img" onclick="snap('w2','Action')"></button></div></div>
+ </div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const API_URL = "https://script.google.com/macros/s/AKfycbzj2OX2biH-zMI7vxj8F_BUDilsf_q6eKOylHDcAuATj99eYAnDlYY-4HmdY1pB-aBR/exec?key=gsd7Kq92xPmL4";  // delete "?key=PASTE_TOKEN" if API_TOKEN is empty in the script
+const PAGE = 40;
+const teamMapping = {"sofior rahman":"Abdul Monnaf","sofior lineman":"Abdul Monnaf","sanjib kumar rabha":"Rajeshwar Rabha","ano ray":"Gagan Das","pranab ch. das":"Gagan Das","rejaul islam":"Diganta Rabha","bahar ali":"Diganta Rabha","fajalur rahman":"Keramot Ali","mahadev sarkar":"Ajay Ray","tarun borgohain":"Ajit Das","kashem ali":"Nikuraj Deka","sofiqul islam":"Niren Ch. Rabha","sofikul islam":"Niren Ch. Rabha","family first and forever":"Gagan Das","dimbeswarbaishya":"Dimbeswar Baishya"};
+const CAT1 = ["Consumer/Meter untraceable","Eviction/erosion/flood","Vacant premise; disconnected from pole","House locked","Consumer of other ESD","Meter number mismatch"];
+const CAT2 = ["Disconnected from pole","Smart meter disconnected at load side","Meter bypass found","Meter seized / in office","Smart meter found at site","Meter found OK (reading taken)","Other - review"];
+const TAG_AS = {"consumer/meter untraceable":"গ্ৰাহক/মিটাৰ বিচাৰি পোৱা নগ'ল","disconnected from pole":"খুঁটাৰ পৰা সংযোগ বিচ্ছিন্ন","smart meter disconnected at load side":"স্মাৰ্ট মিটাৰ—লোড চাইডত সংযোগ বিচ্ছিন্ন","eviction/erosion/flood":"উচ্ছেদ/ভাঙন/বানপানী","vacant premise; disconnected from pole":"খালী ঘৰ; খুঁটাৰ পৰা সংযোগ বিচ্ছিন্ন","house locked":"ঘৰ বন্ধ","meter bypass found":"মিটাৰ বাইপাছ পোৱা গ'ল","consumer of other esd":"অন্য ESD ৰ গ্ৰাহক","meter number mismatch":"মিটাৰ নম্বৰ নিমিলা","meter seized / in office":"মিটাৰ জব্দ/কাৰ্যালয়ত","smart meter found at site":"স্থানত স্মাৰ্ট মিটাৰ পোৱা গ'ল","meter found ok (reading taken)":"মিটাৰ ঠিক; ৰিডিং লোৱা হ'ল","other - review":"অন্য – পুনৰীক্ষণ"};
+const I18N = {
+ en:{title:"Postpaid Field Portal",sub:"Dues-recovery visits & team reports",tabS:"Search Records",tabR:"Daily Pivot Report",consumers:"Consumers",reports:"Total Reports",repeat:"Repeat Consumers",dues:"Outstanding (₹)",searchPh:"🔍 Search consumer, name, meter, worker, feeder, remarks...",allTags:"All tags",allBk:"All action buckets",reset:"Reset",more:"Load more",left:"remaining",cno:"Consumer No",meter:"Meter No",reading:"Reading",worker:"Field Worker",leader:"Team Leader",latest:"Latest Report",rem:"Remarks",loc:"📍 Location",photo:"🖼 Photo",prev:"Previous reports",r1:"report",rn:"reports",noTag:"No tag",none:"No records found.",date:"Filter Date:",clear:"Clear",dedupe:"Count each consumer once",t1:"Not-found / Access Issues Report",t2:"Action & Meter Findings Report",lead:"Team leader",xls:"📊 Export Excel",img:"📸 Download Image",gt:"Grand Total",nodata:"No data for this date.",refresh:"⟳ Refresh",light:"☀️ Light",dark:"🌙 Dark",feeder:"Feeder",out:"Outstanding",conn:"Connection",bucket:"Action bucket"},
+ as:{title:"পোষ্টপেইড ক্ষেত্ৰ পৰ্টেল",sub:"বকেয়া আদায়ৰ পৰিদৰ্শন আৰু দলৰ প্ৰতিবেদন",tabS:"ৰেকৰ্ড সন্ধান",tabR:"দৈনিক পিভট প্ৰতিবেদন",consumers:"গ্ৰাহক",reports:"মুঠ প্ৰতিবেদন",repeat:"পুনৰাবৃত্ত গ্ৰাহক",dues:"বকেয়া (₹)",searchPh:"🔍 গ্ৰাহক, নাম, মিটাৰ, কৰ্মী, ফীডাৰ, মন্তব্য সন্ধান কৰক...",allTags:"সকলো টেগ",allBk:"সকলো ব্যৱস্থা শ্ৰেণী",reset:"ৰিছেট",more:"অধিক লোড কৰক",left:"বাকী",cno:"গ্ৰাহক নং",meter:"মিটাৰ নং",reading:"ৰিডিং",worker:"ক্ষেত্ৰ কৰ্মী",leader:"দল নেতা",latest:"শেহতীয়া প্ৰতিবেদন",rem:"মন্তব্য",loc:"📍 অৱস্থান",photo:"🖼 ফটো",prev:"পূৰ্বৰ প্ৰতিবেদন",r1:"প্ৰতিবেদন",rn:"প্ৰতিবেদন",noTag:"টেগ নাই",none:"কোনো ৰেকৰ্ড পোৱা নগ'ল।",date:"তাৰিখ বাছনি:",clear:"মচক",dedupe:"প্ৰতিজন গ্ৰাহকক এবাৰ গণনা কৰক",t1:"অনুসন্ধান/প্ৰৱেশ সমস্যা প্ৰতিবেদন",t2:"ব্যৱস্থা আৰু মিটাৰ পৰীক্ষা প্ৰতিবেদন",lead:"দল নেতা",xls:"📊 এক্সেল ৰপ্তানি",img:"📸 ছবি ডাউনলোড",gt:"সৰ্বমুঠ",nodata:"এই তাৰিখৰ বাবে কোনো তথ্য নাই।",refresh:"⟳ ৰিফ্ৰেছ",light:"☀️ লাইট",dark:"🌙 ডাৰ্ক",feeder:"ফীডাৰ",out:"বকেয়া",conn:"সংযোগ",bucket:"ব্যৱস্থা শ্ৰেণী"}
+};
+
+// ===== STATE / HELPERS =====
+const $ = id => document.getElementById(id);
+let src = [], recs = [], groups = [], shown = PAGE, lang = "as", theme = "dark", st = {k:"loading"}, tr = {}, trDirty = false;
+const t = k => I18N[lang][k] ?? I18N.en[k] ?? k;
+const tagT = x => lang === "as" ? (TAG_AS[String(x).trim().toLowerCase()] || x) : x;
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const leaderOf = w => w ? (teamMapping[w.trim().toLowerCase()] || w) : "Unknown";
+const valid = v => { const s = String(v ?? "").trim(); return s && s.toUpperCase() !== "N/A" ? s : ""; };
+const datePart = s => !s ? "" : s.includes(" ") ? s.split(" ")[0] : s.includes("T") ? s.split("T")[0] : s;
+const newest = (a, b) => (b._ts - a._ts) || (b._i - a._i);
+const money = n => Number(n || 0).toLocaleString("en-IN");
+const shortFeeder = f => String(f || "").replace(/^040-|\s*11 KV$/g, "");
+function parseTs(ts){
+  const s = String(ts || "").trim(), m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T,]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1], +(m[4]||0), +(m[5]||0), +(m[6]||0)).getTime();
+  const d = new Date(s); return isNaN(d) ? 0 : d.getTime();
+}
+function tagClass(tag){
+  const x = (tag || "").toLowerCase();
+  if (!x) return "slate";
+  if (x.includes("found ok") || x.includes("smart meter found")) return "green";
+  if (x.includes("bypass") || x.includes("seized")) return "red";
+  return "amber";
+}
+function photoOf(r){ let u = String(r["Photo Link"] || "").trim(); if (u.startsWith("'")) u = u.slice(1); return u.startsWith("http") ? u : ""; }
+function mapOf(r){ const a = r["Latitude"], b = r["Longitude"]; return a && a !== "N/A" && b && b !== "N/A" ? `https://maps.google.com/?q=${encodeURIComponent(a)},${encodeURIComponent(b)}` : ""; }
+const remarkOf = r => String(r["Remarks (Original)"] || "").trim() || String(r["Remarks (Refined)"] || "").trim();
+function heat(v){ return !v ? "" : v <= 2 ? "background:#dbeafe;color:#1e3a8a" : v <= 5 ? "background:#93c5fd;color:#1e3a8a" : v <= 9 ? "background:#3b82f6;color:#fff" : "background:#1e40af;color:#fff"; }
+
+// ===== browser cache (IndexedDB) =====
+const idb = () => new Promise((res, rej) => { const q = indexedDB.open("postpaidPortal", 1); q.onupgradeneeded = () => q.result.createObjectStore("kv"); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+async function idbGet(k){ try { const db = await idb(); return await new Promise((res, rej) => { const r = db.transaction("kv").objectStore("kv").get(k); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); } catch(e){ return undefined; } }
+async function idbSet(k, v){ try { const db = await idb(); await new Promise((res, rej) => { const x = db.transaction("kv", "readwrite"); x.objectStore("kv").put(v, k); x.oncomplete = res; x.onerror = () => rej(x.error); }); } catch(e){} }
+
+// ===== remark translation to Assamese (cached) =====
+const needTr = s => s && !/[\u0980-\u09FF]/.test(s) && /[A-Za-z]/.test(s);
+async function translate(text){
+  try { const r = await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=as&dt=t&q=" + encodeURIComponent(text)); const d = await r.json(); return (d[0] || []).map(s => s[0]).join("") || null; } catch(e){ return null; }
+}
+function trSpan(text){
+  if (!text) return "";
+  const c = lang === "as" ? tr[text] : null, pend = lang === "as" && !c && needTr(text);
+  return `<span ${pend ? 'data-tr="1" ' : ""}data-src="${esc(text)}">${esc(c || text)}</span>`;
+}
+async function translatePending(root){
+  const els = [...(root || document).querySelectorAll("[data-tr]")].filter(e => !e.closest(".hist:not(.open)"));
+  let i = 0;
+  const w = async () => { while (i < els.length) { const el = els[i++]; if (lang !== "as") return; const s = el.dataset.src; let o = tr[s]; if (!o) { o = await translate(s); if (o) { tr[s] = o; trDirty = true; } } if (o && lang === "as" && el.isConnected) el.textContent = o; el.removeAttribute("data-tr"); } };
+  await Promise.all([w(), w(), w()]);
+  if (trDirty) { trDirty = false; idbSet("translations", tr); }
+}
+
+// ===== status line =====
+function statusText(){
+  const n = recs.length, c = groups.length, as = lang === "as";
+  if (st.k === "loading") return as ? "তথ্য লোড হৈ আছে..." : "Loading data...";
+  if (st.k === "syncing") return as ? `${n} প্ৰতিবেদন • নতুন তথ্য বিচাৰি আছে...` : `${n} reports • checking for new entries...`;
+  if (st.k === "loaded") return as ? `${n} প্ৰতিবেদন • ${c} গ্ৰাহক${st.added ? ` • +${st.added} নতুন` : ""}` : `${n} reports • ${c} consumers${st.added ? ` • +${st.added} new` : ""}`;
+  if (st.k === "offline") return as ? `অফলাইন – সংৰক্ষিত তথ্য (${n})` : `Offline – showing saved data (${n})`;
+  return as ? "তথ্য লোড কৰিব পৰা নগ'ল। API URL/টকেন পৰীক্ষা কৰক।" : "Failed to load. Check API URL, token and deployment.";
+}
+function setStatus(k, x){ st = Object.assign({k}, x || {}); $("status").textContent = statusText(); }
+
+// ===== data loading: cache first, then only new rows =====
+function rebuild(){
+  recs = src.map((r, i) => Object.assign({}, r, {_ts: parseTs(r["Timestamp"]), _i: i}));
+  const map = new Map();
+  recs.forEach(r => { const c = valid(r["Consumer No"]), k = c ? "c:" + c : "r:" + r._i; if (!map.has(k)) map.set(k, {consumer: c, records: []}); map.get(k).records.push(r); });
+  groups = [...map.values()];
+  groups.forEach(g => { g.records.sort(newest); g.info = g.records.find(x => x["Name"]) || g.records[0]; });
+  groups.sort((a, b) => newest(a.records[0], b.records[0]));
+  fillFilters(); apply(true); report();
+}
+async function load(force){
+  if (!force && !src.length) {
+    const c = await idbGet("records");
+    if (c && c.url === API_URL && Array.isArray(c.rows) && c.rows.length) { src = c.rows; rebuild(); setStatus("syncing"); } else setStatus("loading");
+  } else setStatus("syncing");
+  const cached = force ? [] : src, after = cached.length;
+  try {
+    const res = await fetch(API_URL + (API_URL.includes("?") ? "&" : "?") + "after=" + after);
+    const d = await res.json();
+    if (d.error) throw new Error(d.error);
+    const nr = d.rows || [];
+    if (after > 0 && (d.total < after || after + nr.length !== d.total)) return load(true);
+    if (nr.length || after === 0) { src = cached.concat(nr); await idbSet("records", {url: API_URL, rows: src}); rebuild(); }
+    setStatus("loaded", {added: after > 0 ? nr.length : 0});
+  } catch(e){ console.error(e); setStatus(src.length ? "offline" : "failed"); }
+}
+
+// ===== filters + cards =====
+function fillFilters(){
+  const a = $("tagF"), b = $("bkF"), ka = a.value, kb = b.value;
+  const tags = [...new Set(recs.map(r => (r["Tag"] || "").trim()).filter(Boolean))].sort();
+  const bks = [...new Set(groups.map(g => g.info["Bucket"]).filter(Boolean))].sort();
+  a.innerHTML = `<option value="">${esc(t("allTags"))}</option>` + tags.map(x => `<option value="${esc(x)}">${esc(tagT(x))}</option>`).join("");
+  b.innerHTML = `<option value="">${esc(t("allBk"))}</option>` + bks.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join("");
+  a.value = tags.includes(ka) ? ka : ""; b.value = bks.includes(kb) ? kb : "";
+}
+function apply(keep){
+  if (!keep) shown = PAGE;
+  const q = $("q").value.trim().toLowerCase(), tag = $("tagF").value.toLowerCase(), bk = $("bkF").value;
+  const list = groups.filter(g => {
+    if (tag && !g.records.some(r => (r["Tag"] || "").trim().toLowerCase() === tag)) return false;
+    if (bk && g.info["Bucket"] !== bk) return false;
+    if (!q) return true;
+    return g.records.some(r => Object.entries(r).some(([k, v]) => !k.startsWith("_") && String(v).toLowerCase().includes(q)));
+  });
+  $("n1").textContent = list.length;
+  $("n2").textContent = list.reduce((n, g) => n + g.records.length, 0);
+  $("n3").textContent = list.filter(g => g.records.length > 1).length;
+  $("n4").textContent = money(list.reduce((n, g) => n + (Number(g.info["Outstanding"]) || 0), 0));
+  const box = $("cards");
+  if (!list.length) { box.innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(t("none"))}</div>`; $("moreW").style.display = "none"; return; }
+  const part = list.slice(0, shown);
+  box.innerHTML = part.map(cardHtml).join("");
+  const left = list.length - part.length;
+  $("moreW").style.display = left > 0 ? "block" : "none";
+  $("more").textContent = `${t("more")} (${left} ${t("left")})`;
+  translatePending(box);
+}
+function cardHtml(g, i){
+  const r = g.records[0], inf = g.info, old = g.records.slice(1), tag = (r["Tag"] || "").trim(), n = g.records.length;
+  const rm = remarkOf(r), map = mapOf(r), ph = photoOf(r), w = r["Field Worker"] || "Unknown";
+  return `<div class="card ${tagClass(tag)}">
+  <div class="top"><div><div class="lbl">${esc(t("cno"))}</div><div class="cno">${esc(g.consumer || "N/A")}</div>${inf["Name"] ? `<div class="nm">${esc(inf["Name"])}</div>` : ""}</div>
+   <span class="cnt">${n} ${esc(n > 1 ? t("rn") : t("r1"))}</span></div>
+  <div class="body"><span class="pill ${tagClass(tag)}">${esc(tag ? tagT(tag) : t("noTag"))}</span>
+   <div class="g2">
+    <div><div class="k">${esc(t("feeder"))}</div><div class="v">${esc(shortFeeder(inf["Feeder"]) || "—")}</div></div>
+    <div><div class="k">${esc(t("out"))}</div><div class="v">₹ ${money(inf["Outstanding"])}</div></div>
+    <div><div class="k">${esc(t("conn"))}</div><div class="v">${esc(inf["Conn Status"] || "—")} / ${esc(inf["Meter Type"] || "—")}</div></div>
+    <div><div class="k">${esc(t("bucket"))}</div><div class="v">${esc(inf["Bucket"] || "—")}</div></div>
+    <div><div class="k">${esc(t("meter"))}</div><div class="v">${esc(r["Meter No"] || "N/A")}</div></div>
+    <div><div class="k">${esc(t("reading"))}</div><div class="v">${esc(r["Reading"] || "N/A")}</div></div>
+    <div><div class="k">${esc(t("worker"))}</div><div class="v">${esc(w)}</div></div>
+    <div><div class="k">${esc(t("leader"))}</div><div class="v">${esc(leaderOf(w))}</div></div>
+    <div style="grid-column:1/-1"><div class="k">${esc(t("latest"))}</div><div class="v">${esc(r["Timestamp"] || "")}</div></div>
+   </div>
+   ${rm ? `<div class="rem"><small>${esc(t("rem"))}</small>${trSpan(rm)}</div>` : ""}
+   <div class="act">${map ? `<a class="lk" target="_blank" rel="noopener" href="${map}">${esc(t("loc"))}</a>` : ""}${ph ? `<a class="lk" target="_blank" rel="noopener" href="${esc(ph)}">${esc(t("photo"))}</a>` : ""}</div>
+  </div>
+  ${old.length ? `<button class="ht" data-h="h${i}"><span>${esc(t("prev"))} (${old.length})</span><span>▾</span></button><div class="hist" id="h${i}">${old.map(histHtml).join("")}</div>` : ""}
+ </div>`;
+}
+function histHtml(r){
+  const tag = (r["Tag"] || "").trim(), rm = remarkOf(r), map = mapOf(r), ph = photoOf(r);
+  return `<div class="hi"><div class="t">${esc(r["Timestamp"] || "")}</div>
+  <div class="l"><span class="pill ${tagClass(tag)}">${esc(tag ? tagT(tag) : t("noTag"))}</span><span>👷 ${esc(r["Field Worker"] || "Unknown")}</span><span>${esc(t("meter"))} ${esc(r["Meter No"] || "N/A")}</span><span>${esc(t("reading"))} ${esc(r["Reading"] || "N/A")}</span></div>
+  ${rm ? `<div class="r">${trSpan(rm)}</div>` : ""}
+  ${(map || ph) ? `<div style="margin-top:6px">${map ? `<a target="_blank" rel="noopener" href="${map}">${esc(t("loc"))}</a>` : ""}${ph ? `<a target="_blank" rel="noopener" href="${esc(ph)}">${esc(t("photo"))}</a>` : ""}</div>` : ""}</div>`;
+}
+
+// ===== pivot reports =====
+function pivot(id, cats, label){
+  const date = $("rd").value, dedupe = $("dd").checked;
+  let rows = recs.filter(r => {
+    if (date && datePart(r["Timestamp"] || "") !== date) return false;
+    return cats.some(c => c.toLowerCase() === (r["Tag"] || "").trim().toLowerCase());
+  }).sort(newest);
+  if (dedupe) { const seen = new Set(); rows = rows.filter(r => { const c = valid(r["Consumer No"]).toLowerCase(); if (!c) return true; if (seen.has(c)) return false; seen.add(c); return true; }); }
+  const sum = {}, cols = cats.map(() => 0); let grand = 0;
+  rows.forEach(r => {
+    const m = cats.find(c => c.toLowerCase() === (r["Tag"] || "").trim().toLowerCase()), l = leaderOf(r["Field Worker"]);
+    if (!sum[l]) { sum[l] = {name: l, total: 0}; cats.forEach(c => sum[l][c] = 0); }
+    sum[l][m]++; sum[l].total++;
+  });
+  let h = `<table class="pt" id="${id}t"><thead><tr><th class="rl" style="text-align:center">${esc(label)}</th>${cats.map(c => `<th class="ch">${esc(tagT(c))}</th>`).join("")}<th class="ch" style="background:#94a3b8;color:#0f172a">${esc(t("gt"))}</th></tr></thead><tbody>`;
+  Object.values(sum).sort((a, b) => b.total - a.total).forEach(d => {
+    h += `<tr><th class="rl">${esc(d.name)}</th>` + cats.map((c, i) => { cols[i] += d[c]; return `<td style="${heat(d[c])}">${d[c] || ""}</td>`; }).join("") + `<td class="gt">${d.total}</td></tr>`;
+    grand += d.total;
+  });
+  h += grand ? `<tr><th class="rl gt">${esc(t("gt"))}</th>${cols.map(v => `<td class="gt">${v || ""}</td>`).join("")}<td class="gt">${grand}</td></tr>`
+             : `<tr><td colspan="${cats.length + 2}" style="padding:20px">${esc(t("nodata"))}</td></tr>`;
+  $(id).innerHTML = h + "</tbody></table>";
+}
+function report(){ pivot("w1", CAT1, t("lead")); pivot("w2", CAT2, t("lead")); }
+function csv(id, label){
+  const out = [];
+  $(id).querySelectorAll("tr").forEach(tr => out.push([...tr.querySelectorAll("td,th")].map(c => '"' + c.innerText.replace(/\s+/g, " ").trim().replace(/"/g, '""') + '"').join(",")));
+  const a = document.createElement("a"); a.download = `${label}_Pivot_${$("rd").value || "All_Time"}.csv`;
+  a.href = URL.createObjectURL(new Blob(["\uFEFF" + out.join("\n")], {type: "text/csv;charset=utf-8"})); a.click();
+}
+function snap(id, label){
+  html2canvas($(id), {backgroundColor: "#ffffff", scale: 2}).then(c => { const a = document.createElement("a"); a.download = `${label}_Report_${$("rd").value || "All_Time"}.png`; a.href = c.toDataURL("image/png"); a.click(); });
+}
+
+// ===== language / theme / events =====
+function texts(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i]").forEach(e => e.textContent = t(e.dataset.i));
+  document.querySelectorAll("[data-p]").forEach(e => e.placeholder = t(e.dataset.p));
+  $("lg").textContent = lang === "as" ? "🌐 English" : "🌐 অসমীয়া";
+  $("th").textContent = theme === "dark" ? t("light") : t("dark");
+  $("status").textContent = statusText();
+}
+function setTheme(x){ theme = x; document.documentElement.setAttribute("data-theme", x); try { localStorage.setItem("ppTheme", x); } catch(e){} $("th").textContent = x === "dark" ? t("light") : t("dark"); }
+function tab(id){
+  document.querySelectorAll(".tc").forEach(e => e.classList.remove("on"));
+  document.querySelectorAll(".tb").forEach(e => e.classList.toggle("on", e.dataset.t === id));
+  $(id).classList.add("on"); if (id === "r") report();
+}
+let timer;
+window.addEventListener("DOMContentLoaded", async () => {
+  try { const x = localStorage.getItem("ppTheme"); if (x) theme = x; } catch(e){}
+  document.documentElement.setAttribute("data-theme", theme);
+  $("rd").value = new Date().toISOString().split("T")[0];
+  texts();
+  document.querySelectorAll(".tb").forEach(b => b.addEventListener("click", () => tab(b.dataset.t)));
+  $("q").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(() => apply(), 200); });
+  $("tagF").addEventListener("change", () => apply()); $("bkF").addEventListener("change", () => apply());
+  $("reset").addEventListener("click", () => { $("q").value = ""; $("tagF").value = ""; $("bkF").value = ""; apply(); });
+  $("more").addEventListener("click", () => { shown += PAGE; apply(true); });
+  $("rd").addEventListener("change", report); $("dd").addEventListener("change", report);
+  $("cd").addEventListener("click", () => { $("rd").value = ""; report(); });
+  $("rf").addEventListener("click", () => load(true));
+  $("lg").addEventListener("click", () => { lang = lang === "as" ? "en" : "as"; texts(); fillFilters(); apply(true); report(); });
+  $("th").addEventListener("click", () => setTheme(theme === "dark" ? "light" : "dark"));
+  $("cards").addEventListener("click", e => {
+    const b = e.target.closest(".ht"); if (!b) return;
+    const p = $(b.dataset.h), open = p.classList.toggle("open");
+    b.lastElementChild.textContent = open ? "▴" : "▾"; if (open) translatePending(p);
+  });
+  tr = (await idbGet("translations")) || {};
+  load(false);
+});
+</script>
+</body>
+</html>
